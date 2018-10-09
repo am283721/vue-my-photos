@@ -1,15 +1,11 @@
 # Simple Image Lightbox for Vue.js
 No dependencies required!
 
-```html
 Inspired by <a href="https://github.com/DCzajkowski/vue-pure-lightbox">vue-pure-lightbox</a>, however I 
 needed a framework that allowed for a gallery of thumbnails as well as filtering functionality.
-```
 
 ## Demo
-```html
 <a href="https://codepen.io/am283721/pen/VEwNKR">Live demo available on Codepen</a>
-```
 
 ## Installation and Setup
 
@@ -84,12 +80,13 @@ updateFilter(filterName) {
 | filter (Optional - Default: "all") | string   | String to filter on specific images (Ex: "nature")|
 | directory (Optional - Default: "") | string   | Path to location of images (Ex: "/src/assets/")   |
 
-###Example of images array:
+**Example of images array:**
 
 ```js
 var images = [{'name':'mountains.jpg', 'alt':'The Dolomites', 'filter':'nature' },
               {'name':'bird.jpg', 'alt':'It is a bird', 'filter':'animals' }];
 ```
+
 **Note**:
 - 'name' value should include the file extension
 - 'alt' is required, but can be an empty string
@@ -97,8 +94,6 @@ var images = [{'name':'mountains.jpg', 'alt':'The Dolomites', 'filter':'nature' 
 
 ## Recommended additional modules
 
-```html
-<a href="https://github.com/gilbarbara/disable-scroll#readme">disable-scroll</a> or similar module to prevent the user from scrolling
-while the lightbox is visible
-<a href="https://github.com/FortAwesome/vue-fontawesome">vue-fontawesome</a> if you want to replace/re-style the svg icons for left/right
-arrows and close icon.
+<a href="https://github.com/gilbarbara/disable-scroll#readme">disable-scroll</a> or similar module to prevent the user from scrolling while the lightbox is visible.
+
+<a href="https://github.com/FortAwesome/vue-fontawesome">vue-fontawesome</a> if you want to replace/re-style the svg icons for left/right arrows and close icon.
