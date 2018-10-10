@@ -26,7 +26,7 @@
                         </transition>
                     </div>
                     <transition name="lightbox-fade">
-                        <div class="lightbox-caption" v-show="controlsVisible" @mousedown.stop @touchdown.stop>
+                        <div class="lightbox-caption" v-show="controlsVisible && filteredImages[index].alt" @mousedown.stop @touchdown.stop>
                             <span unselectable="on">{{ filteredImages[index].alt }}</span>
                         </div>
                     </transition>

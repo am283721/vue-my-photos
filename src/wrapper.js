@@ -1,5 +1,5 @@
 // Import vue component
-import Lightbox from './components/Lightbox.vue';
+import Lightbox from './lightbox.vue';
 
 // Declare install function executed by Vue.use()
 export function install(Vue) {

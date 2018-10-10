@@ -72,7 +72,7 @@ var Lightbox = (function (exports) {
                 default: 3000
             }
         },
-        data() {
+        data: function data() {
             return {
                 visible: false,        // Lightbox not visible by default
                 controlsVisible: true, // Lightbox controls (arrows, caption, close button)
@@ -80,28 +80,30 @@ var Lightbox = (function (exports) {
                 timer: null          // Timer to show/hide lightbox controls           
             }
         },
-        mounted() {
+        mounted: function mounted() {
             window.addEventListener('keydown', this.keyEventListener);
             window.addEventListener('mousemove',this.mouseEventListener);
             window.addEventListener('touchmove',this.mouseEventListener);
             window.addEventListener('mouseup',this.mouseEventListener);
         },
-        destroyed() {
+        destroyed: function destroyed() {
             window.removeEventListener('keydown', this.keyEventListener);
             window.removeEventListener('mousemove',this.mouseEventListener);
             window.removeEventListener('touchmove',this.mouseEventListener);
             window.removeEventListener('mouseup',this.mouseEventListener);
         },
         methods: {
-            show(imageName) {
+            show: function show(imageName) {
+                var this$1 = this;
+
                 this.visible = true;
                 this.controlsVisible = true;
                 var that = this;
 
                 // Find the index of the image passed to Lightbox
                 for(var i = 0; i < this.filteredImages.length; i++){
-                    if(this.filteredImages[i].name == imageName) {
-                        this.index = i;
+                    if(this$1.filteredImages[i].name == imageName) {
+                        this$1.index = i;
                         break;
                     }
                 }
@@ -109,29 +111,29 @@ var Lightbox = (function (exports) {
                 this.timer = setTimeout(function() {that.controlsVisible = false;}, that.timeoutDuration);
                 this.preloadNextImage();
             },
-            hide() {
+            hide: function hide() {
                 this.visible = false;
                 this.index = 0;
                 clearTimeout(this.timer);
             },
-            has_next() {
+            has_next: function has_next() {
                 return (this.index + 1 < this.filteredImages.length);
             },
-            has_prev() {
+            has_prev: function has_prev() {
                 return (this.index - 1 >= 0);
             },
-            prev() {
+            prev: function prev() {
                 if (this.has_prev()) {
                     this.index -= 1;
                 }
             },
-            next() {
+            next: function next() {
                 if (this.has_next()) {
                     this.index += 1;
                     this.preloadNextImage();
                 }
             },
-            keyEventListener(e) {
+            keyEventListener: function keyEventListener(e) {
                 if (this.visible) {
                     var that = this;
                     this.controlsVisible = true;
@@ -159,7 +161,7 @@ var Lightbox = (function (exports) {
             // This event shows the arrows and caption on the lightbox when the mouse is moved or clicked.
             // Also used for touch events on touchscreen devices. The elements are set to disappear
             // after a given duration via a timer.
-            mouseEventListener(e) {
+            mouseEventListener: function mouseEventListener(e) {
                 if (this.visible) {
                     var that = this;
                     this.controlsVisible = true;
@@ -167,7 +169,7 @@ var Lightbox = (function (exports) {
                     this.timer = setTimeout(function() {that.controlsVisible = false;}, that.timeoutDuration);
                 }
             },
-            preloadNextImage () {
+            preloadNextImage: function preloadNextImage () {
                 if (this.has_next()){
                     try {
                         var _img = new Image();
@@ -192,7 +194,7 @@ var Lightbox = (function (exports) {
     };
 
     /* script */
-                const __vue_script__ = script;
+                var __vue_script__ = script;
     /* template */
     var __vue_render__ = function() {
       var _vm = this;
@@ -391,8 +393,11 @@ var Lightbox = (function (exports) {
                             {
                               name: "show",
                               rawName: "v-show",
-                              value: _vm.controlsVisible,
-                              expression: "controlsVisible"
+                              value:
+                                _vm.controlsVisible &&
+                                _vm.filteredImages[_vm.index].alt,
+                              expression:
+                                "controlsVisible && filteredImages[index].alt"
                             }
                           ],
                           staticClass: "lightbox-caption",
@@ -478,30 +483,30 @@ var Lightbox = (function (exports) {
     __vue_render__._withStripped = true;
 
       /* style */
-      const __vue_inject_styles__ = undefined;
+      var __vue_inject_styles__ = undefined;
       /* scoped */
-      const __vue_scope_id__ = undefined;
+      var __vue_scope_id__ = undefined;
       /* module identifier */
-      const __vue_module_identifier__ = undefined;
+      var __vue_module_identifier__ = undefined;
       /* functional template */
-      const __vue_is_functional_template__ = false;
+      var __vue_is_functional_template__ = false;
       /* component normalizer */
       function __vue_normalize__(
         template, style, script$$1,
         scope, functional, moduleIdentifier,
         createInjector, createInjectorSSR
       ) {
-        const component = (typeof script$$1 === 'function' ? script$$1.options : script$$1) || {};
+        var component = (typeof script$$1 === 'function' ? script$$1.options : script$$1) || {};
 
         // For security concerns, we use only base name in production mode.
-        component.__file = "/Users/andrew/Documents/GitHub/vue-image-lightbox/src/components/Lightbox.vue";
+        component.__file = "/Users/andrew/Documents/GitHub/vue-image-lightbox/src/lightbox.vue";
 
         if (!component.render) {
           component.render = template.render;
           component.staticRenderFns = template.staticRenderFns;
           component._compiled = true;
 
-          if (functional) component.functional = true;
+          if (functional) { component.functional = true; }
         }
 
         component._scopeId = scope;
@@ -529,18 +534,18 @@ var Lightbox = (function (exports) {
 
     // Declare install function executed by Vue.use()
     function install(Vue) {
-    	if (install.installed) return;
+    	if (install.installed) { return; }
     	install.installed = true;
     	Vue.component('MyComponent', Lightbox);
     }
 
     // Create module definition for Vue.use()
-    const plugin = {
-    	install,
+    var plugin = {
+    	install: install,
     };
 
     // Auto-install when vue is found (eg. in browser via <script> tag)
-    let GlobalVue = null;
+    var GlobalVue = null;
     if (typeof window !== 'undefined') {
     	GlobalVue = window.Vue;
     } else if (typeof global !== 'undefined') {
