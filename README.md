@@ -5,18 +5,18 @@ Inspired by <a href="https://github.com/DCzajkowski/vue-pure-lightbox">vue-pure-
 needed a framework that allowed for a gallery of thumbnails as well as filtering functionality.
 
 ## Demo
-<a href="https://codepen.io/am283721/pen/VEwNKR">Live demo available on Codepen</a>
+<a href="https://codepen.io/am283721/pen/VEwNKR" target="_blank">Live demo available on Codepen</a>
 
 ## Installation and Setup
 
 ### Via NPM:
 ```bash
-npm i vue-image-lightbox --save
+npm i vue-my-photos --save
 ```
 
 Then in your main.js file:
 ```js
-import Lightbox from 'vue-image-lightbox'
+import Lightbox from 'vue-my-photos'
 Vue.component('lightbox', Lightbox);
 ```
 
@@ -48,6 +48,7 @@ Simply initiate a lightbox component with the 'lightbox' tag and unique ref name
     :images="images"
     :filter="galleryFilter"
     :directory="thumbnailDir"
+    :timeoutDuration="5000"
 ></lightbox>
 ```
 
@@ -74,11 +75,12 @@ updateFilter(filterName) {
 
 ### Properties
 
-| Property                           | Type     | Value                                             |
-| ---------------------------------- | -------- | ------------------------------------------------- |
-| images (Required)                  | array    | Array of objects with image data (example below)  |
-| filter (Optional - Default: "all") | string   | String to filter on specific images (Ex: "nature")|
-| directory (Optional - Default: "") | string   | Path to location of images (Ex: "/src/assets/")   |
+| Property                                   | Type     | Value                                                           |
+| ------------------------------------------ | -------- | --------------------------------------------------------------- |
+| images (Required)                          | array    | Array of objects with image data (example below)                |
+| filter (Optional - Default: "all")         | string   | String to filter on specific images (Ex: "nature")              |
+| directory (Optional - Default: "")         | string   | Path to location of images (Ex: "/src/assets/")                 |
+| timeoutDuration (Optional - Default: 3000) | integer  | duration in ms of key/mouse inactivity before caption disappears|
 
 **Example of images array:**
 

@@ -32,7 +32,7 @@
                     </transition>
                 <div class="lightbox-main" @mousedown.stop="hide" @touchdown.stop="hide">
                     <div class="lightbox-image-container" @mousedown.stop @touchdown.stop>
-                        <transition name="slide" mode="out-in">
+                        <transition name="lightbox-slide" mode="out-in">
                             <div class="lightbox-image" :key="index" :style="{ 'backgroundImage':'url(' + directory + filteredImages[index].name + ')'}">
                             </div>
                         </transition>
@@ -61,6 +61,12 @@
             directory: {
                 type: String,
                 default: ''
+            },
+            // Used to set the duration in miliseconds of key/mouse inactivity before caption
+            // and arrows disappear
+            timeoutDuration: {
+                type: Number,
+                default: 3000
             }
         },
         data() {
@@ -68,8 +74,7 @@
                 visible: false,        // Lightbox not visible by default
                 controlsVisible: true, // Lightbox controls (arrows, caption, close button)
                 index: 0,              // Index indicates which photo to display. Default to 1st photo
-                timer: null,           // Timer to show/hide lightbox controls
-                timeoutDuration: 2500  // Timer duration
+                timer: null          // Timer to show/hide lightbox controls           
             }
         },
         mounted() {
@@ -279,19 +284,19 @@
         user-select: none;
     }
 
-    .slide-enter-active,
-    .slide-leave-active {
+    .lightbox-slide-enter-active,
+    .lightbox-slide-leave-active {
         transition: all 0.4s ease;
     }
 
-    .slide-enter {
+    .lightbox-slide-enter {
         -webkit-transform: translateX(100px);
         -ms-transform: translateX(100px);
         transform: translateX(100px);
         opacity: 0;
     }
 
-    .slide-leave-to {
+    .lightbox-slide-leave-to {
         -webkit-transform: translateX(-100px);
         -ms-transform: translateX(-100px);
         transform: translateX(-100px);

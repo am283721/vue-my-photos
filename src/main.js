@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import App from './App.vue'
-import Lightbox from './components/Lightbox'
+import Lightbox from './components/Lightbox.vue'
 
 Vue.component('lightbox', Lightbox);
 

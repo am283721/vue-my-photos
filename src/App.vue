@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <h1>vue-image-lightbox Demo</h1>
+    <h1>vue-my-photos Demo</h1>
     <div id="filters">
       <form>
         <fieldset>
@@ -28,8 +28,9 @@
 
     <lightbox ref="lightbox"
       :images="images"
-      :filter="galleryFilter"
       :directory="thumbnailDir"
+      :filter="galleryFilter"
+      :timeoutDuration="5000"
     ></lightbox>
   </div>
 </template>
@@ -49,8 +50,8 @@ export default {
   data () {
     return {
       thumbnailDir: '/src/assets/',
-      galleryFilter: '',
-      images: imageList
+      images: imageList,
+      galleryFilter: 'all'
     }
   },
   methods: {
@@ -77,7 +78,7 @@ export default {
 body {
   border-color: #69655d;
   color: #ece1ca;
-  background-color: #404041;
+  background-color: #676769;
 }
 
 #filters {
