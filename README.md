@@ -7,6 +7,8 @@ needed a framework that allowed for a gallery of thumbnails as well as filtering
 ## Demo
 <a href="https://codepen.io/am283721/pen/VEwNKR" target="_blank">Live demo available on Codepen</a>
 
+<a href="https://andrew-mcgrath.com/Portfolio" target="_blank">Or see it in action here</a>
+
 ## Installation and Setup
 
 ### Via NPM:
@@ -23,9 +25,9 @@ Vue.component('lightbox', Lightbox);
 ### Via CDN:
 ```html
 <!-- In <head> -->
-<meta rel="stylesheet" href="">
+<meta rel="stylesheet" href="https://unpkg.com/vue-my-photos/dist/lightbox.css">
 <!-- In <body>, after Vue import -->
-<script src=""></script>
+<script src="https://unpkg.com/vue-my-photos/dist/lightbox.js"></script>
 ```
 
 Then in your App:
@@ -44,7 +46,8 @@ Then in your App:
 Simply initiate a lightbox component with the 'lightbox' tag and unique ref name:
 
 ```html
-<lightbox ref="lightbox"
+<lightbox id="mylightbox"
+    ref="lightbox"
     :images="images"
     :filter="galleryFilter"
     :directory="thumbnailDir"
@@ -52,7 +55,7 @@ Simply initiate a lightbox component with the 'lightbox' tag and unique ref name
 ></lightbox>
 ```
 
-Each thumbnail in the gallery then registers a click event:
+Each thumbnail in the gallery then registers a click event, passing the name of the photo:
 
 ```html
 @click="showLightbox(image.name)"
