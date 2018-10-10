@@ -91,7 +91,7 @@ var images = [{'name':'mountains.jpg', 'alt':'The Dolomites', 'filter':'nature' 
 
 **Note**:
 - 'name' value should include the file extension
-- 'alt' is required, but can be an empty string
+- 'alt' is optional
 - 'filter' is optional if you don't pass/update the filter value on the lightbox component
 
 ## Recommended additional modules

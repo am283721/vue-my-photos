@@ -623,7 +623,7 @@
     function install(Vue) {
     	if (install.installed) { return; }
     	install.installed = true;
-    	Vue.component('MyComponent', Lightbox);
+    	Vue.component('Lightbox', Lightbox);
     }
 
     // Create module definition for Vue.use()
