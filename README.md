@@ -88,14 +88,15 @@ updateFilter(filterName) {
 **Example of images array:**
 
 ```js
-var images = [{'name':'mountains.jpg', 'alt':'The Dolomites', 'filter':'nature' },
-              {'name':'bird.jpg', 'alt':'It is a bird', 'filter':'animals' }];
+var images = [{'name':'mountains.jpg', 'alt':'The Dolomites', 'filter':'nature', 'id':'image1' },
+              {'name':'bird.jpg', 'alt':'It is a bird', 'filter':'animals', 'id':'image2' }];
 ```
 
 **Note**:
 - 'name' value should include the file extension
 - 'alt' is optional
 - 'filter' is optional if you don't pass/update the filter value on the lightbox component
+- 'id' is optional, but useful as a key if you're displaying the images in a gallery using the v-for iterator
 
 ## Recommended additional modules
 

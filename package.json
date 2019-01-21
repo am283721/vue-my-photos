@@ -1,7 +1,7 @@
 {
   "name": "vue-my-photos",
   "description": "Simple lightbox component for Vue applications",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "author": "Andrew McGrath",
   "license": "MIT",
   "homepage": "https://github.com/am283721/vue-my-photos",
@@ -26,7 +26,7 @@
     "image"
   ],
   "dependencies": {
-    "vue": "^2.5.11"
+    "vue": "^2.5.22"
   },
   "browserslist": [
     "> 1%",
@@ -47,7 +47,7 @@
     "rollup-plugin-vue": "^4.3.2",
     "vue-loader": "^13.0.5",
     "vue-template-compiler": "^2.4.4",
-    "webpack": "^3.6.0",
-    "webpack-dev-server": "^2.9.1"
+    "webpack": "^3.12.0",
+    "webpack-dev-server": "^3.1.14"
   }
 }

@@ -22,7 +22,7 @@
     </div>
 
     <transition-group name="thumbnailfade" tag="div">
-      <img v-for="(thumb, index) in images" :key="index" v-if="galleryFilter === 'all' || thumb.filter === galleryFilter"
+      <img v-for="thumb in filteredImages" :key="thumb.id" 
            @click="showLightbox(thumb.name)"  :src="thumbnailDir + thumb.name" :alt="thumb.alt" :title="thumb.alt" />
     </transition-group>
 
@@ -36,14 +36,14 @@
 </template>
 
 <script>
-var imageList = [{'name':'mountains.jpg', 'alt':'The Dolomites', 'filter':'nature' },
-               {'name':'bird.jpg', 'alt':'It is a bird on a tree!', 'filter':'animals' }, 
-               {'name':'alps.jpg', 'alt':'I will live here someday', 'filter':'nature' },
-               {'name':'bear.jpg', 'alt':'Friendly bear', 'filter':'animals' },
-               {'name':'canyon.jpg', 'alt':'A worthy hike', 'filter':'nature' },
-               {'name':'monumentvalley.jpg', 'alt':'Monument Valley', 'filter':'nature' },
-               {'name':'puppy.jpg', 'alt':'Puppy with a feather', 'filter':'animals' }, 
-               {'name':'redwoods.jpg', 'alt':'Foggy evening in the Redwoods', 'filter':'nature' } ];
+var imageList = [{'name':'mountains.jpg', 'alt':'The Dolomites', 'filter':'nature', 'id':'image1' },
+               {'name':'bird.jpg', 'alt':'It is a bird on a tree!', 'filter':'animals', 'id':'image2' }, 
+               {'name':'alps.jpg', 'alt':'I will live here someday', 'filter':'nature', 'id':'image3' },
+               {'name':'bear.jpg', 'alt':'Friendly bear', 'filter':'animals', 'id':'image4' },
+               {'name':'canyon.jpg', 'alt':'A worthy hike', 'filter':'nature', 'id':'image5' },
+               {'name':'monumentvalley.jpg', 'alt':'Monument Valley', 'filter':'nature', 'id':'image6' },
+               {'name':'puppy.jpg', 'alt':'Puppy with a feather', 'filter':'animals', 'id':'image7' }, 
+               {'name':'redwoods.jpg', 'alt':'Foggy evening in the Redwoods', 'filter':'nature', 'id':'image8' } ];
 
 export default {
   name: 'app',
@@ -60,6 +60,15 @@ export default {
     },
     updateFilter(filterName) {
       this.galleryFilter = filterName;
+    }
+  },
+  computed: {
+    filteredImages: function() {
+      if (this.galleryFilter === 'all') {
+        return this.images;
+      } else {
+        return this.images.filter(image => image.filter === this.galleryFilter);
+      }
     }
   }
 }
