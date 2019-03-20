@@ -32,7 +32,7 @@
                     </transition>
                 <div class="lightbox-main" @mousedown.stop="hide" @touchdown.stop="hide">
                     <div class="lightbox-image-container" @mousedown.stop @touchdown.stop>
-                        <transition name="lightbox-slide" mode="out-in">
+                        <transition :name="slideTransitionName" mode="out-in">
                             <div class="lightbox-image" :key="index" :style="{ 'backgroundImage':'url(' + directory + filteredImages[index].name + ')'}">
                             </div>
                         </transition>
@@ -74,7 +74,8 @@
                 visible: false,        // Lightbox not visible by default
                 controlsVisible: true, // Lightbox controls (arrows, caption, close button)
                 index: 0,              // Index indicates which photo to display. Default to 1st photo
-                timer: null          // Timer to show/hide lightbox controls           
+                timer: null,          // Timer to show/hide lightbox controls
+                slideTransitionName: "lightbox-slide-next" //Controls animation's transition direction (next or prev)
             }
         },
         mounted() {
@@ -120,12 +121,14 @@
             prev() {
                 if (this.has_prev()) {
                     this.index -= 1;
+                    this.slideTransitionName = "lightbox-slide-prev";
                 }
             },
             next() {
                 if (this.has_next()) {
                     this.index += 1;
                     this.preloadNextImage();
+                    this.slideTransitionName = "lightbox-slide-next";
                 }
             },
             keyEventListener(e) {
@@ -284,12 +287,35 @@
         user-select: none;
     }
 
-    .lightbox-slide-enter-active,
-    .lightbox-slide-leave-active {
+    .lightbox-slide-next-enter-active,
+    .lightbox-slide-next-leave-active,
+    .lightbox-slide-prev-enter-active,
+    .lightbox-slide-prev-leave-active{
         transition: all 0.4s ease;
     }
-
-    .lightbox-slide-enter {
+    
+    .lightbox-slide-next-enter {
+        -webkit-transform: translateX(100px);
+        -ms-transform: translateX(100px);
+        transform: translateX(100px);
+        opacity: 0;
+    }
+    
+    .lightbox-slide-next-leave-to {
+        -webkit-transform: translateX(-100px);
+        -ms-transform: translateX(-100px);
+        transform: translateX(-100px);
+        opacity: 0;
+    }
+    
+    .lightbox-slide-prev-enter {
+        -webkit-transform: translateX(-100px);
+        -ms-transform: translateX(-100px);
+        transform: translateX(-100px);
+        opacity: 0;
+    }
+    
+    .lightbox-slide-prev-leave-to {
         -webkit-transform: translateX(100px);
         -ms-transform: translateX(100px);
         transform: translateX(100px);
