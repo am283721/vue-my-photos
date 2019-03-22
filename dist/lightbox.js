@@ -77,7 +77,8 @@ var Lightbox = (function (exports) {
                 visible: false,        // Lightbox not visible by default
                 controlsVisible: true, // Lightbox controls (arrows, caption, close button)
                 index: 0,              // Index indicates which photo to display. Default to 1st photo
-                timer: null          // Timer to show/hide lightbox controls           
+                timer: null,          // Timer to show/hide lightbox controls
+                slideTransitionName: "lightbox-slide-next" //Controls animation's transition direction (next or prev)
             }
         },
         mounted: function mounted() {
@@ -124,11 +125,13 @@ var Lightbox = (function (exports) {
             },
             prev: function prev() {
                 if (this.has_prev()) {
+                    this.slideTransitionName = "lightbox-slide-prev";
                     this.index -= 1;
                 }
             },
             next: function next() {
                 if (this.has_next()) {
+                    this.slideTransitionName = "lightbox-slide-next";
                     this.index += 1;
                     this.preloadNextImage();
                 }
@@ -450,7 +453,12 @@ var Lightbox = (function (exports) {
                           [
                             _c(
                               "transition",
-                              { attrs: { name: "lightbox-slide", mode: "out-in" } },
+                              {
+                                attrs: {
+                                  name: _vm.slideTransitionName,
+                                  mode: "out-in"
+                                }
+                              },
                               [
                                 _c("div", {
                                   key: _vm.index,

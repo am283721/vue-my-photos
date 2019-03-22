@@ -120,15 +120,15 @@
             },
             prev() {
                 if (this.has_prev()) {
-                    this.index -= 1;
                     this.slideTransitionName = "lightbox-slide-prev";
+                    this.index -= 1;
                 }
             },
             next() {
                 if (this.has_next()) {
+                    this.slideTransitionName = "lightbox-slide-next";
                     this.index += 1;
                     this.preloadNextImage();
-                    this.slideTransitionName = "lightbox-slide-next";
                 }
             },
             keyEventListener(e) {
@@ -319,13 +319,6 @@
         -webkit-transform: translateX(100px);
         -ms-transform: translateX(100px);
         transform: translateX(100px);
-        opacity: 0;
-    }
-
-    .lightbox-slide-leave-to {
-        -webkit-transform: translateX(-100px);
-        -ms-transform: translateX(-100px);
-        transform: translateX(-100px);
         opacity: 0;
     }
 
