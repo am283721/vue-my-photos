@@ -507,7 +507,7 @@ var Lightbox = (function (exports) {
         var component = (typeof script$$1 === 'function' ? script$$1.options : script$$1) || {};
 
         // For security concerns, we use only base name in production mode.
-        component.__file = "/Users/andrew/Documents/GitHub/vue-image-lightbox/src/lightbox.vue";
+        component.__file = "/Users/andrew/Documents/GitHub/vue-my-photos/src/lightbox.vue";
 
         if (!component.render) {
           component.render = template.render;
