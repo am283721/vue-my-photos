@@ -51,7 +51,8 @@ Simply initiate a lightbox component with the 'lightbox' tag and unique ref name
     :images="images"
     :filter="galleryFilter"
     :directory="thumbnailDir"
-    :timeoutDuration="5000"
+    :timeout-duration=5000
+    :close-on-backdrop-click="true"
 ></lightbox>
 ```
 
@@ -78,12 +79,13 @@ updateFilter(filterName) {
 
 ### Properties
 
-| Property                                   | Type     | Value                                                           |
-| ------------------------------------------ | -------- | --------------------------------------------------------------- |
-| images (Required)                          | array    | Array of objects with image data (example below)                |
-| filter (Optional - Default: "all")         | string   | String to filter on specific images (Ex: "nature")              |
-| directory (Optional - Default: "")         | string   | Path to location of images (Ex: "/src/assets/")                 |
-| timeoutDuration (Optional - Default: 3000) | integer  | duration in ms of key/mouse inactivity before caption disappears|
+| Property                                         | Type     | Value                                                                  |
+| ------------------------------------------------ | -------- | ---------------------------------------------------------------------- |
+| images (Required)                                | array    | Array of objects with image data (example below)                       |
+| filter (Optional - Default: "all")               | string   | String to filter on specific images (Ex: "nature")                     |
+| directory (Optional - Default: "")               | string   | Path to location of images (Ex: "/src/assets/")                        |
+| timeoutDuration (Optional - Default: 3000)       | integer  | duration in ms of key/mouse inactivity before caption disappears       |
+| closeOnBackdropClick (Optional - Default: false) | boolean  | toggle whether or not to close lightbox when clicking outside of image |
 
 **Example of images array:**
 

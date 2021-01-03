@@ -30,7 +30,8 @@
       :images="images"
       :directory="thumbnailDir"
       :filter="galleryFilter"
-      :timeoutDuration="5000"
+      :timeout-duration=5000
+      :close-on-backdrop-click="true"
     ></lightbox>
   </div>
 </template>

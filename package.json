@@ -23,7 +23,8 @@
     "vue",
     "vue.js",
     "lightbox",
-    "image"
+    "image",
+    "gallery"
   ],
   "dependencies": {
     "vue": "^2.6.12"

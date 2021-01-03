@@ -1,4 +1,4 @@
-<template>
+d<template>
     <div>
         <transition name="lightbox-fade">
             <div class="lightbox" v-if="visible" @mousedown.stop="hide" @touchdown.stop="hide">
@@ -31,7 +31,7 @@
                         </div>
                     </transition>
                 <div class="lightbox-main" @mousedown.stop="hide" @touchdown.stop="hide">
-                    <div class="lightbox-image-container" @mousedown.stop @touchdown.stop>
+                    <div class="lightbox-image-container" @mousedown.stop="lightboxClick" @touchdown.stop="lightboxClick">
                         <transition :name="slideTransitionName" mode="out-in">
                             <div class="lightbox-image" :key="index" :style="{ 'backgroundImage':'url(' + directory + filteredImages[index].name + ')'}">
                             </div>
@@ -67,6 +67,11 @@
             timeoutDuration: {
                 type: Number,
                 default: 3000
+            },
+            // When true, lightbox will close when user clicks on the black backdrop
+            closeOnBackdropClick: {
+                type: Boolean,
+                default: false
             }
         },
         data() {
@@ -91,10 +96,38 @@
             window.removeEventListener('mouseup',this.mouseEventListener);
         },
         methods: {
+            // If closeOnBackdropClick is true, we need to close the lightbox when the user clicks on the 
+            // black part of the lightbox surrounding the image. Since the image is actually set as the background
+            // we can't easily determine if the click event was on the image or the rest of the background. So instead
+            // we get the dimensions of the original image, determine it's actual size within the lightbox and determine if
+            // the click landed within the image (knowing that the image is centered horizontally and vertically in the lightbox
+            lightboxClick(event) {
+                if (this.closeOnBackdropClick) {
+                    let lightboxWidth = event.target.clientWidth;
+                    var lightboxHeight = event.target.clientHeight;
+                    var x = typeof event.clientX === 'number' ? event.clientX : 0;
+                    var y = typeof event.clientY === 'number' ? event.clientY : 0;
+                    var img = new Image();
+                    img.src = this.directory + this.filteredImages[this.index].name;
+                    var imgWidth = img.width;
+                    var imgHeight = img.height;
+
+                    if (imgWidth && imgHeight && typeof lightboxWidth === 'number' && typeof lightboxHeight === 'number') {
+                        var actualImageWidth = imgWidth / imgHeight * lightboxHeight;
+                        var actualImageHeight = imgHeight / imgWidth * lightboxWidth;
+
+                        if (x < ((lightboxWidth - actualImageWidth) / 2) || x > (lightboxWidth + actualImageWidth) / 2) {
+                            this.hide();
+                        }
+                        else if (y < ((lightboxHeight - actualImageHeight) / 2) || y > ((lightboxHeight + actualImageHeight) / 2)) {
+                            this.hide();
+                        }
+                    }
+                }
+            },
             show(imageName) {
                 this.visible = true;
                 this.controlsVisible = true;
-                var that = this;
 
                 // Find the index of the image passed to Lightbox
                 for(var i = 0; i < this.filteredImages.length; i++){
@@ -103,8 +136,7 @@
                         break;
                     }
                 }
-                clearTimeout(this.timer);
-                this.timer = setTimeout(function() {that.controlsVisible = false}, that.timeoutDuration);
+                this.restartCaptionTimer();
                 this.preloadNextImage();
             },
             hide() {
@@ -133,10 +165,8 @@
             },
             keyEventListener(e) {
                 if (this.visible) {
-                    var that = this;
                     this.controlsVisible = true;
-                    clearTimeout(this.timer);
-                    this.timer = setTimeout(function() {that.controlsVisible = false}, that.timeoutDuration);
+                    this.restartCaptionTimer();
 
                     switch (e.key) {
                         case 'ArrowRight':
@@ -161,10 +191,8 @@
             // after a given duration via a timer.
             mouseEventListener(e) {
                 if (this.visible) {
-                    var that = this;
                     this.controlsVisible = true;
-                    clearTimeout(this.timer);
-                    this.timer = setTimeout(function() {that.controlsVisible = false}, that.timeoutDuration);
+                    this.restartCaptionTimer();
                 }
             },
             preloadNextImage () {
@@ -174,18 +202,21 @@
                         _img.src = this.directory + this.filteredImages[this.index + 1].name;
                     } catch (e) { }
                 }
+            },
+            restartCaptionTimer() {
+                clearTimeout(this.timer);
+                this.timer = setTimeout(function() {this.controlsVisible = false}.bind(this), this.timeoutDuration);
             }
         },
         computed: {
             filteredImages: function () {
-                var that = this;
-                if (that.filter === 'all' || !that.filter.length){
-                    return that.images;
+                if (this.filter === 'all' || !this.filter.length){
+                    return this.images;
                 }
                 else {
-                    return that.images.filter(function (item) {
-                        return item.filter === that.filter;
-                    })
+                    return this.images.filter(function (item) {
+                        return item.filter === this.filter;
+                    }.bind(this))
                 }
             }
         }
