@@ -29,16 +29,18 @@
     "babel-loader": "^7.1.2",
     "babel-preset-env": "^1.6.0",
     "babel-preset-stage-3": "^6.24.1",
-    "cross-env": "^5.0.5",
+    "cross-env": "^5.2.1",
     "css-loader": "^0.28.11",
     "file-loader": "^1.1.4",
-    "rollup": "^0.66.3",
-    "rollup-plugin-buble": "^0.19.2",
+    "rollup": "^2.33.1",
+    "rollup-plugin-buble": "^0.19.8",
+    "rollup-plugin-commonjs": "^10.1.0",
     "rollup-plugin-css-only": "^0.4.0",
-    "rollup-plugin-vue": "^4.3.2",
-    "vue-loader": "^13.0.5",
+    "rollup-plugin-vue": "^4.7.2",
+    "vue-loader": "^14.2.2",
     "vue-template-compiler": "^2.6.12",
-    "webpack": "^3.6.0",
-    "webpack-dev-server": "^2.9.1"
+    "webpack": "^4.6.0",
+    "webpack-cli": "^3.3.10",
+    "webpack-dev-server": "^3.11.0"
   }
 }

@@ -1,11 +1,12 @@
 import vue from 'rollup-plugin-vue';
+import commonjs from 'rollup-plugin-commonjs';
 import css from 'rollup-plugin-css-only';
 import buble from 'rollup-plugin-buble';
 
 export default [
   {
     // ESM build to be used with webpack/rollup.
-    input: 'src/wrapper.js',
+    input: 'src/main.js',
     output: {
       name: 'Lightbox',
       format: 'esm',
@@ -13,16 +14,17 @@ export default [
       exports: 'named'
     },
     plugins: [
-    vue({
-      css: true,
-      compileTemplate: true,
-    }),
-    buble()
+      commonjs(),
+      vue({
+        css: true,
+        compileTemplate: true,
+      }),
+      buble()
     ]
   },
   // UMD build.
   {
-    input: 'src/wrapper.js',
+    input: 'src/main.js',
     output: {
       name: 'Lightbox',
       format: 'umd',
@@ -30,6 +32,7 @@ export default [
       exports: 'named'
     },
     plugins: [
+      commonjs(),
       vue({
         css: true,
         compileTemplate: true,
@@ -39,7 +42,7 @@ export default [
   },
   // Browser build.
   {
-    input: 'src/wrapper.js',
+    input: 'src/main.js',
     output: {
       name: 'Lightbox',
       format: 'iife',
@@ -47,6 +50,7 @@ export default [
       exports: 'named'
     },
     plugins: [
+      commonjs(),
       css(),
       vue({
         css: false,
