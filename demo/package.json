@@ -34,8 +34,8 @@
     "file-loader": "^1.1.4",
     "vue-loader": "^14.2.2",
     "vue-template-compiler": "^2.6.12",
-    "webpack": "^4.6.0",
+    "webpack": "^4.44.1",
     "webpack-cli": "^3.3.10",
-    "webpack-dev-server": "^3.11.0"
+    "webpack-dev-server": "^3.11.1"
   }
 }
