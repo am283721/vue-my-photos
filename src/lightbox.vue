@@ -1,4 +1,4 @@
-d<template>
+<template>
     <div>
         <transition name="lightbox-fade">
             <div class="lightbox" v-if="visible" @mousedown.stop="hide" @touchdown.stop="hide">
