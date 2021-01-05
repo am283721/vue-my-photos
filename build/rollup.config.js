@@ -1,62 +1,168 @@
+// rollup.config.js
+import fs from 'fs';
+import path from 'path';
 import vue from 'rollup-plugin-vue';
-import commonjs from 'rollup-plugin-commonjs';
-import css from 'rollup-plugin-css-only';
-import buble from 'rollup-plugin-buble';
+import alias from '@rollup/plugin-alias';
+import commonjs from '@rollup/plugin-commonjs';
+import resolve from '@rollup/plugin-node-resolve';
+import replace from '@rollup/plugin-replace';
+import babel from '@rollup/plugin-babel';
+import PostCSS from 'rollup-plugin-postcss';
+import { terser } from 'rollup-plugin-terser';
+import minimist from 'minimist';
 
-export default [
-  {
-    // ESM build to be used with webpack/rollup.
-    input: 'src/main.js',
+// Get browserslist config and remove ie from es build targets
+const esbrowserslist = fs.readFileSync('./.browserslistrc')
+  .toString()
+  .split('\n')
+  .filter((entry) => entry && entry.substring(0, 2) !== 'ie');
+
+const argv = minimist(process.argv.slice(2));
+
+const projectRoot = path.resolve(__dirname, '..');
+
+const baseConfig = {
+  input: 'src/entry.ts',
+  plugins: {
+    preVue: [
+      alias({
+        entries: [
+          {
+            find: '@',
+            replacement: `${path.resolve(projectRoot, 'src')}`,
+          },
+        ],
+        customResolver: resolve({
+          extensions: ['.js', '.jsx', '.ts', '.tsx', '.vue'],
+        }),
+      }),
+    ],
+    replace: {
+      'process.env.NODE_ENV': JSON.stringify('production'),
+    },
+    vue: {
+    },
+    postVue: [
+      // Process only `<style module>` blocks.
+      PostCSS({
+        modules: {
+          generateScopedName: '[local]___[hash:base64:5]',
+        },
+        include: /&module=.*\.css$/,
+      }),
+      // Process all `<style>` blocks except `<style module>`.
+      PostCSS({ include: /(?<!&module=.*)\.css$/ }),
+    ],
+    babel: {
+      exclude: 'node_modules/**',
+      extensions: ['.js', '.jsx', '.ts', '.tsx', '.vue'],
+      babelHelpers: 'bundled',
+    },
+  },
+};
+
+// ESM/UMD/IIFE shared settings: externals
+// Refer to https://rollupjs.org/guide/en/#warning-treating-module-as-external-dependency
+const external = [
+  // list external dependencies, exactly the way it is written in the import statement.
+  // eg. 'jquery'
+  'vue',
+];
+
+// UMD/IIFE shared settings: output.globals
+// Refer to https://rollupjs.org/guide/en#output-globals for details
+const globals = {
+  // Provide global variable names to replace your external imports
+  // eg. jquery: '$'
+  vue: 'Vue',
+};
+
+// Customize configs for individual targets
+const buildFormats = [];
+if (!argv.format || argv.format === 'es') {
+  const esConfig = {
+    ...baseConfig,
+    input: 'src/entry.esm.ts',
+    external,
     output: {
-      name: 'Lightbox',
-      format: 'esm',
       file: 'dist/lightbox.esm.js',
-      exports: 'named'
+      format: 'esm',
+      exports: 'named',
     },
     plugins: [
-      commonjs(),
-      vue({
-        css: true,
-        compileTemplate: true,
+      replace(baseConfig.plugins.replace),
+      ...baseConfig.plugins.preVue,
+      vue(baseConfig.plugins.vue),
+      ...baseConfig.plugins.postVue,
+      babel({
+        ...baseConfig.plugins.babel,
+        presets: [
+          [
+            '@babel/preset-env',
+            {
+              targets: esbrowserslist,
+            },
+          ],
+        ],
       }),
-      buble()
-    ]
-  },
-  // UMD build.
-  {
-    input: 'src/main.js',
+      commonjs(),
+    ],
+  };
+  buildFormats.push(esConfig);
+}
+
+if (!argv.format || argv.format === 'cjs') {
+  const umdConfig = {
+    ...baseConfig,
+    external,
     output: {
+      compact: true,
+      file: 'dist/lightbox.ssr.js',
+      format: 'cjs',
       name: 'Lightbox',
-      format: 'umd',
-      file: 'dist/lightbox.umd.js',
-      exports: 'named'
+      exports: 'auto',
+      globals,
     },
     plugins: [
+      replace(baseConfig.plugins.replace),
+      ...baseConfig.plugins.preVue,
+      vue(baseConfig.plugins.vue),
+      ...baseConfig.plugins.postVue,
+      babel(baseConfig.plugins.babel),
       commonjs(),
-      vue({
-        css: true,
-        compileTemplate: true,
-      }),
-      buble()
-    ]
-  },
-  // Browser build.
-  {
-    input: 'src/main.js',
+    ],
+  };
+  buildFormats.push(umdConfig);
+}
+
+if (!argv.format || argv.format === 'iife') {
+  const unpkgConfig = {
+    ...baseConfig,
+    external,
     output: {
-      name: 'Lightbox',
+      compact: true,
+      file: 'dist/lightbox.min.js',
       format: 'iife',
-      file: 'dist/lightbox.js',
-      exports: 'named'
+      name: 'Lightbox',
+      exports: 'auto',
+      globals,
     },
     plugins: [
+      replace(baseConfig.plugins.replace),
+      ...baseConfig.plugins.preVue,
+      vue(baseConfig.plugins.vue),
+      ...baseConfig.plugins.postVue,
+      babel(baseConfig.plugins.babel),
       commonjs(),
-      css(),
-      vue({
-        css: false,
-        compileTemplate: true
+      terser({
+        output: {
+          ecma: 5,
+        },
       }),
-      buble()
-    ]
-  }
-]
+    ],
+  };
+  buildFormats.push(unpkgConfig);
+}
+
+// Export config
+export default buildFormats;

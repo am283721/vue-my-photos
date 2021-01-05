@@ -1,25 +1,23 @@
 # Simple Image Lightbox for Vue.js
-No dependencies required!
+Upgraded to support Vue 3 and still no dependencies required!
 
 Inspired by <a href="https://github.com/DCzajkowski/vue-pure-lightbox">vue-pure-lightbox</a>, however I 
 needed a framework that allowed for a gallery of thumbnails as well as filtering functionality.
 
+## Vue Compatibility
+If your project uses Vue 2, use vue-my-photos@1.x.x
+
+If your project uses Vue 3, use vue-my-photos@2.x.x
 ## Demo
 <a href="https://codepen.io/am283721/pen/VEwNKR" target="_blank">Live demo available on Codepen</a>
 
 <a href="https://andrew-mcgrath.com/Portfolio" target="_blank">Or see it in action here</a>
 
-## Installation and Setup
+## Installation
 
 ### Via NPM:
 ```bash
 npm i vue-my-photos --save
-```
-
-Then in your main.js file:
-```js
-import Lightbox from 'vue-my-photos'
-Vue.component('lightbox', Lightbox);
 ```
 
 ### Via CDN:
@@ -30,12 +28,38 @@ Vue.component('lightbox', Lightbox);
 <script src="https://unpkg.com/vue-my-photos/dist/lightbox.js"></script>
 ```
 
+## Setup
+
+### Vue 2
+In your main.js file:
+```js
+import Lightbox from 'vue-my-photos'
+Vue.component('lightbox', Lightbox);
+```
+
 Then in your App:
 ```html
 <script>
     Vue.use(Lightbox)
-
+    // ...
     new Vue({
+        // ...
+    })
+</script>
+```
+
+### Vue 3
+
+In your App:
+```html
+<script>
+    import Lightbox from "@/lightbox.vue";
+    // ...
+    export default defineComponent({
+        name: "VueMyPhotosDemo",
+        components: {
+            Lightbox,
+        },
         // ...
     })
 </script>
@@ -43,7 +67,7 @@ Then in your App:
 
 ## Usage
 
-Simply initiate a lightbox component with the 'lightbox' tag and unique ref name:
+Simply initiate a lightbox component with the `lightbox` tag and *unique* ref name:
 
 ```html
 <lightbox id="mylightbox"
@@ -56,17 +80,29 @@ Simply initiate a lightbox component with the 'lightbox' tag and unique ref name
 ></lightbox>
 ```
 
-Each thumbnail in the gallery then registers a click event, passing the name of the photo:
+Expose the appropriate data for the template:
+
+```js
+data() {
+    return {
+        thumbnailDir: "/.../.../",
+        images: imageList,
+        galleryFilter: "all",
+    };
+},
+```
+
+Each thumbnail in the gallery registers a click event, passing the name of the photo:
 
 ```html
-@click="showLightbox(image.name)"
+<img @click="showLightbox('img.jpg')" src="..." alt="..." title="..." />
 ```
 
 And add the showLightbox (or w/e name you choose) method to your vue page:
 
 ```js
 showLightbox: function(imageName) {
-    this.$refs.lightbox.show(imageName);
+    this.$refs.mylightbox.show(imageName);
 }
 ```
 
@@ -97,7 +133,7 @@ var images = [{'name':'mountains.jpg', 'alt':'The Dolomites', 'filter':'nature',
 **Note**:
 - 'name' value should include the file extension
 - 'alt' is optional
-- 'filter' is optional if you don't pass/update the filter value on the lightbox component
+- 'filter' is optional if you never pass or try to update the filter value on the lightbox component
 - 'id' is optional, but useful as a key if you're displaying the images in a gallery using the v-for iterator
 
 ## Recommended additional modules
