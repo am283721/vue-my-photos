@@ -84,6 +84,11 @@ export default defineComponent({
             type: Boolean,
             default: false,
         },
+        // Used to specify which image to display. When updated within the parent component, the lightbox will display the new image
+        currentImageName: {
+            type: String,
+            default: "",
+        },
     },
     data() {
         return {
@@ -105,6 +110,13 @@ export default defineComponent({
         window.removeEventListener("mousemove", this.mouseEventListener);
         //  window.removeEventListener("touchmove", this.mouseEventListener);
         window.removeEventListener("mouseup", this.mouseEventListener);
+    },
+    watch: {
+        currentImageName(newVal) {
+            if (newVal) {
+                this.show(newVal);
+            }
+        },
     },
     computed: {
         filteredImages(): Image[] {
@@ -141,43 +153,46 @@ export default defineComponent({
             }
         },
         show(imageName: String) {
-            this.visible = true;
-            this.controlsVisible = true;
-
-            let index = this.filteredImages.findIndex((img: Image) => img.name === imageName);
             // Find the index of the image passed to Lightbox
-            for (const [i, img] of this.filteredImages.entries()) {
-                if (img.name === imageName) {
-                    this.index = i;
-                    break;
-                }
+            let index = this.filteredImages.findIndex((img: Image) => img.name === imageName);
+
+            if (index > -1) {
+                this.visible = true;
+                this.controlsVisible = true;
+                this.index = index;
+                this.restartCaptionTimer();
+                this.preloadNextImage();
             }
-            this.restartCaptionTimer();
-            this.preloadNextImage();
         },
         hide() {
             this.visible = false;
             this.index = 0;
+            this.$emit("onLightboxClose", "");
             clearTimeout(this.timer);
         },
         has_next() {
             return this.index + 1 < this.filteredImages.length;
         },
         has_prev() {
-            return this.index - 1 >= 0;
+            return this.index > 0;
         },
         prev() {
             if (this.has_prev()) {
                 this.slideTransitionName = "lightbox-slide-prev";
                 this.index -= 1;
+                this.$emit("onLightboxChange", this.getCurrentImage());
             }
         },
         next() {
             if (this.has_next()) {
                 this.slideTransitionName = "lightbox-slide-next";
                 this.index += 1;
+                this.$emit("onLightboxChange", this.getCurrentImage());
                 this.preloadNextImage();
             }
+        },
+        getCurrentImage() {
+            return this.index >= 0 && this.index < this.filteredImages.length ? this.filteredImages[this.index] : { name: "", alt: "", filter: "", id: "" };
         },
         keyEventListener(e: KeyboardEvent) {
             if (this.visible) {

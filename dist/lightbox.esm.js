@@ -30,6 +30,11 @@ var script = defineComponent({
     closeOnBackdropClick: {
       type: Boolean,
       default: false
+    },
+    // Used to specify which image to display. When updated within the parent component, the lightbox will display the new image
+    currentImageName: {
+      type: String,
+      default: ""
     }
   },
 
@@ -62,6 +67,14 @@ var script = defineComponent({
     window.removeEventListener("mouseup", this.mouseEventListener);
   },
 
+  watch: {
+    currentImageName(newVal) {
+      if (newVal) {
+        this.show(newVal);
+      }
+    }
+
+  },
   computed: {
     filteredImages() {
       if (this.filter === "all" || !this.filter.length) {
@@ -98,24 +111,22 @@ var script = defineComponent({
     },
 
     show(imageName) {
-      this.visible = true;
-      this.controlsVisible = true;
-      let index = this.filteredImages.findIndex(img => img.name === imageName); // Find the index of the image passed to Lightbox
+      // Find the index of the image passed to Lightbox
+      let index = this.filteredImages.findIndex(img => img.name === imageName);
 
-      for (const [i, img] of this.filteredImages.entries()) {
-        if (img.name === imageName) {
-          this.index = i;
-          break;
-        }
+      if (index > -1) {
+        this.visible = true;
+        this.controlsVisible = true;
+        this.index = index;
+        this.restartCaptionTimer();
+        this.preloadNextImage();
       }
-
-      this.restartCaptionTimer();
-      this.preloadNextImage();
     },
 
     hide() {
       this.visible = false;
       this.index = 0;
+      this.$emit("onLightboxClose", "");
       clearTimeout(this.timer);
     },
 
@@ -124,13 +135,14 @@ var script = defineComponent({
     },
 
     has_prev() {
-      return this.index - 1 >= 0;
+      return this.index > 0;
     },
 
     prev() {
       if (this.has_prev()) {
         this.slideTransitionName = "lightbox-slide-prev";
         this.index -= 1;
+        this.$emit("onLightboxChange", this.getCurrentImage());
       }
     },
 
@@ -138,8 +150,18 @@ var script = defineComponent({
       if (this.has_next()) {
         this.slideTransitionName = "lightbox-slide-next";
         this.index += 1;
+        this.$emit("onLightboxChange", this.getCurrentImage());
         this.preloadNextImage();
       }
+    },
+
+    getCurrentImage() {
+      return this.index >= 0 && this.index < this.filteredImages.length ? this.filteredImages[this.index] : {
+        name: "",
+        alt: "",
+        filter: "",
+        id: ""
+      };
     },
 
     keyEventListener(e) {
@@ -197,9 +219,9 @@ var script = defineComponent({
   }
 });
 
-const _withId = /*#__PURE__*/withScopeId("data-v-0805a4de");
+const _withId = /*#__PURE__*/withScopeId("data-v-21966ddd");
 
-pushScopeId("data-v-0805a4de");
+pushScopeId("data-v-21966ddd");
 
 const _hoisted_1 = {
   class: "lightbox-arrow-left-icon"
@@ -336,11 +358,11 @@ function styleInject(css, ref) {
   }
 }
 
-var css_248z = "\n.lightbox[data-v-0805a4de] {\n    position: fixed;\n    top: 0;\n    left: 0;\n    background: rgba(0, 0, 0, 0.9);\n    width: 100%;\n    height: 100%;\n    display: -webkit-box;\n    display: -ms-flexbox;\n    display: -webkit-flex;\n    display: flex;\n    justify-content: center;\n    align-items: center;\n    z-index: 200;\n    color: rgba(255, 255, 255, 0.8);\n}\n.lightbox-close[data-v-0805a4de] {\n    position: fixed;\n    z-index: 210;\n    right: 0;\n    top: 0;\n    padding: 1rem;\n    font-size: 1.7rem;\n    cursor: pointer;\n    width: 4rem;\n    height: 4rem;\n    color: white;\n}\n.lightbox-main[data-v-0805a4de] {\n    display: -webkit-box;\n    display: -ms-flexbox;\n    display: -webkit-flex;\n    display: flex;\n    width: 100%;\n    height: 100%;\n}\n.lightbox-arrow[data-v-0805a4de] {\n    padding: 0 2rem;\n    cursor: pointer;\n    display: -webkit-box;\n    display: -ms-flexbox;\n    display: -webkit-flex;\n    display: flex;\n    justify-content: center;\n    align-items: center;\n    position: absolute;\n    padding: 0 2rem;\n    height: 100%;\n    width: 2rem;\n    z-index: 100;\n}\n.lightbox-arrow-right[data-v-0805a4de] {\n    right: 0;\n}\n.lightbox-arrow-left[data-v-0805a4de] {\n    left: 0;\n}\n.lightbox-image-container[data-v-0805a4de] {\n    -webkit-box-flex: 1;\n    width: 20%;\n    -webkit-flex: 1;\n    -ms-flex: 1;\n    flex: 1;\n}\n.lightbox-image[data-v-0805a4de] {\n    width: 100%;\n    height: 100%;\n    background-size: contain;\n    background-repeat: no-repeat;\n    background-position: 50% 50%;\n}\n.lightbox-caption[data-v-0805a4de] {\n    position: absolute;\n    bottom: 15px;\n    width: 100%;\n    z-index: 100;\n    text-align: center;\n    text-shadow: 1px 1px 3px rgb(26, 26, 26);\n}\n.lightbox-caption span[data-v-0805a4de] {\n    border-radius: 12px;\n    background-color: rgba(0, 0, 0, 0.6);\n    padding: 2px 10px;\n    -webkit-user-select: none;\n    -moz-user-select: none;\n    -ms-user-select: none;\n    user-select: none;\n}\n.lightbox-slide-next-enter-active[data-v-0805a4de],\n.lightbox-slide-next-leave-active[data-v-0805a4de],\n.lightbox-slide-prev-enter-active[data-v-0805a4de],\n.lightbox-slide-prev-leave-active[data-v-0805a4de] {\n    transition: all 0.4s ease;\n}\n.lightbox-slide-next-enter[data-v-0805a4de] {\n    -webkit-transform: translateX(100px);\n    -ms-transform: translateX(100px);\n    transform: translateX(100px);\n    opacity: 0;\n}\n.lightbox-slide-next-leave-to[data-v-0805a4de] {\n    -webkit-transform: translateX(-100px);\n    -ms-transform: translateX(-100px);\n    transform: translateX(-100px);\n    opacity: 0;\n}\n.lightbox-slide-prev-enter[data-v-0805a4de] {\n    -webkit-transform: translateX(-100px);\n    -ms-transform: translateX(-100px);\n    transform: translateX(-100px);\n    opacity: 0;\n}\n.lightbox-slide-prev-leave-to[data-v-0805a4de] {\n    -webkit-transform: translateX(100px);\n    -ms-transform: translateX(100px);\n    transform: translateX(100px);\n    opacity: 0;\n}\n.lightbox-fade-enter-active[data-v-0805a4de],\n.lightbox-fade-leave-active[data-v-0805a4de] {\n    transition: all 0.4s ease;\n}\n.lightbox-fade-enter[data-v-0805a4de],\n.lightbox-fade-leave-to[data-v-0805a4de] {\n    opacity: 0;\n}\n";
+var css_248z = "\n.lightbox[data-v-21966ddd] {\n    position: fixed;\n    top: 0;\n    left: 0;\n    background: rgba(0, 0, 0, 0.9);\n    width: 100%;\n    height: 100%;\n    display: -webkit-box;\n    display: -ms-flexbox;\n    display: -webkit-flex;\n    display: flex;\n    justify-content: center;\n    align-items: center;\n    z-index: 200;\n    color: rgba(255, 255, 255, 0.8);\n}\n.lightbox-close[data-v-21966ddd] {\n    position: fixed;\n    z-index: 210;\n    right: 0;\n    top: 0;\n    padding: 1rem;\n    font-size: 1.7rem;\n    cursor: pointer;\n    width: 4rem;\n    height: 4rem;\n    color: white;\n}\n.lightbox-main[data-v-21966ddd] {\n    display: -webkit-box;\n    display: -ms-flexbox;\n    display: -webkit-flex;\n    display: flex;\n    width: 100%;\n    height: 100%;\n}\n.lightbox-arrow[data-v-21966ddd] {\n    padding: 0 2rem;\n    cursor: pointer;\n    display: -webkit-box;\n    display: -ms-flexbox;\n    display: -webkit-flex;\n    display: flex;\n    justify-content: center;\n    align-items: center;\n    position: absolute;\n    padding: 0 2rem;\n    height: 100%;\n    width: 2rem;\n    z-index: 100;\n}\n.lightbox-arrow-right[data-v-21966ddd] {\n    right: 0;\n}\n.lightbox-arrow-left[data-v-21966ddd] {\n    left: 0;\n}\n.lightbox-image-container[data-v-21966ddd] {\n    -webkit-box-flex: 1;\n    width: 20%;\n    -webkit-flex: 1;\n    -ms-flex: 1;\n    flex: 1;\n}\n.lightbox-image[data-v-21966ddd] {\n    width: 100%;\n    height: 100%;\n    background-size: contain;\n    background-repeat: no-repeat;\n    background-position: 50% 50%;\n}\n.lightbox-caption[data-v-21966ddd] {\n    position: absolute;\n    bottom: 15px;\n    width: 100%;\n    z-index: 100;\n    text-align: center;\n    text-shadow: 1px 1px 3px rgb(26, 26, 26);\n}\n.lightbox-caption span[data-v-21966ddd] {\n    border-radius: 12px;\n    background-color: rgba(0, 0, 0, 0.6);\n    padding: 2px 10px;\n    -webkit-user-select: none;\n    -moz-user-select: none;\n    -ms-user-select: none;\n    user-select: none;\n}\n.lightbox-slide-next-enter-active[data-v-21966ddd],\n.lightbox-slide-next-leave-active[data-v-21966ddd],\n.lightbox-slide-prev-enter-active[data-v-21966ddd],\n.lightbox-slide-prev-leave-active[data-v-21966ddd] {\n    transition: all 0.4s ease;\n}\n.lightbox-slide-next-enter[data-v-21966ddd] {\n    -webkit-transform: translateX(100px);\n    -ms-transform: translateX(100px);\n    transform: translateX(100px);\n    opacity: 0;\n}\n.lightbox-slide-next-leave-to[data-v-21966ddd] {\n    -webkit-transform: translateX(-100px);\n    -ms-transform: translateX(-100px);\n    transform: translateX(-100px);\n    opacity: 0;\n}\n.lightbox-slide-prev-enter[data-v-21966ddd] {\n    -webkit-transform: translateX(-100px);\n    -ms-transform: translateX(-100px);\n    transform: translateX(-100px);\n    opacity: 0;\n}\n.lightbox-slide-prev-leave-to[data-v-21966ddd] {\n    -webkit-transform: translateX(100px);\n    -ms-transform: translateX(100px);\n    transform: translateX(100px);\n    opacity: 0;\n}\n.lightbox-fade-enter-active[data-v-21966ddd],\n.lightbox-fade-leave-active[data-v-21966ddd] {\n    transition: all 0.4s ease;\n}\n.lightbox-fade-enter[data-v-21966ddd],\n.lightbox-fade-leave-to[data-v-21966ddd] {\n    opacity: 0;\n}\n";
 styleInject(css_248z);
 
 script.render = render;
-script.__scopeId = "data-v-0805a4de";
+script.__scopeId = "data-v-21966ddd";
 
 // Import vue component
 

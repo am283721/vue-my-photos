@@ -5,9 +5,9 @@ Inspired by <a href="https://github.com/DCzajkowski/vue-pure-lightbox">vue-pure-
 needed a framework that allowed for a gallery of thumbnails as well as filtering functionality.
 
 ## Vue Compatibility
-If your project uses Vue 2, use vue-my-photos@1.x.x
+Versions >= 2.0.0 are built for Vue 3.
 
-If your project uses Vue 3, use vue-my-photos@2.x.x
+If your project uses Vue 2, <a href="https://www.npmjs.com/package/vue-my-photos/v/1.1.1" target="_blank">use vue-my-photos-1.1.1</a>
 ## Demo
 <a href="https://codepen.io/am283721/pen/VEwNKR" target="_blank">Live demo available on Codepen</a>
 
@@ -30,26 +30,6 @@ npm i vue-my-photos --save
 
 ## Setup
 
-### Vue 2
-In your main.js file:
-```js
-import Lightbox from 'vue-my-photos'
-Vue.component('lightbox', Lightbox);
-```
-
-Then in your App:
-```html
-<script>
-    Vue.use(Lightbox)
-    // ...
-    new Vue({
-        // ...
-    })
-</script>
-```
-
-### Vue 3
-
 In your App:
 ```html
 <script>
@@ -64,19 +44,22 @@ In your App:
     })
 </script>
 ```
-
 ## Usage
 
-Simply initiate a lightbox component with the `lightbox` tag and *unique* ref name:
+Simply initiate a lightbox component with the `lightbox` tag:
 
 ```html
-<lightbox id="mylightbox"
-    ref="lightbox"
+<lightbox 
+    id="myLightbox"
+    ref="mylightbox"                            * Now Optional
     :images="images"
-    :filter="galleryFilter"
-    :directory="thumbnailDir"
-    :timeout-duration=5000
-    :close-on-backdrop-click="true"
+    :current-image-name="currentImageName"
+    @on-lightbox-close="onLightboxClose"
+    :filter="galleryFilter"                     * Optional
+    :directory="thumbnailDir"                   * Optional
+    :timeout-duration=5000                      * Optional
+    :close-on-backdrop-click="true"             * Optional
+    @on-lightbox-change="onLightboxChange"      * Optional
 ></lightbox>
 ```
 
@@ -88,6 +71,7 @@ data() {
         thumbnailDir: "/.../.../",
         images: imageList,
         galleryFilter: "all",
+        currentImageName: ""
     };
 },
 ```
@@ -98,12 +82,15 @@ Each thumbnail in the gallery registers a click event, passing the name of the p
 <img @click="showLightbox('img.jpg')" src="..." alt="..." title="..." />
 ```
 
-And add the showLightbox (or w/e name you choose) method to your vue page:
+And add the showLightbox and onLightboxClose methods to your vue page (these can be named however you like):
 
 ```js
-showLightbox: function(imageName) {
-    this.$refs.mylightbox.show(imageName);
-}
+showLightbox(imageName: string) {
+    this.currentImageName = imageName;
+},
+onLightboxClose(imageName: string) {
+    this.currentImageName = imageName;
+},
 ```
 
 To update which images show within the lightbox, update the filter string like so:
@@ -113,15 +100,35 @@ updateFilter(filterName) {
 }
 ```
 
+### A Note On v2 Updates
+
+Previously, the lightbox was shown by accessing the component via the $refs object and calling the show method directly:
+
+```js
+showLightbox: function(imageName) {
+    this.$refs.mylightbox.show(imageName);
+}
+```
+
+This approach can still be done (and in Vue 3 using Ref() within the setup method), however, in an effort to decouple the Lightbox Component from its parent Component, the new recommended approach is detailed above using the `currentImageName` prop. This is a reactive property that will trigger the lightbox to display whenever its value is changed. A method that listens to the `on-lightbox-close` event must also be implemented in order to reset the value of  `currentImageName` (Otherwise, if the user tries to open the lightbox with the same image twice in a row, `currentImageName` won't change and the lightbox won't open).
+
 ### Properties
 
-| Property                                         | Type     | Value                                                                  |
-| ------------------------------------------------ | -------- | ---------------------------------------------------------------------- |
-| images (Required)                                | array    | Array of objects with image data (example below)                       |
-| filter (Optional - Default: "all")               | string   | String to filter on specific images (Ex: "nature")                     |
-| directory (Optional - Default: "")               | string   | Path to location of images (Ex: "/src/assets/")                        |
-| timeoutDuration (Optional - Default: 3000)       | integer  | duration in ms of key/mouse inactivity before caption disappears       |
-| closeOnBackdropClick (Optional - Default: false) | boolean  | toggle whether or not to close lightbox when clicking outside of image |
+| Property                                         | Type     | Value                                                                       |
+| ------------------------------------------------ | -------- | --------------------------------------------------------------------------- |
+| images (Required)                                | array    | Array of objects with image data (example below)                            |
+| currentImageName (Required)                      | string   | Should initially be an empty string, then updated later to trigger lightbox |
+| filter (Optional - Default: "all")               | string   | String to filter on specific images (Ex: "nature")                          |
+| directory (Optional - Default: "")               | string   | Path to location of images (Ex: "/src/assets/")                             |
+| timeoutDuration (Optional - Default: 3000)       | integer  | duration in ms of key/mouse inactivity before caption disappears            |
+| closeOnBackdropClick (Optional - Default: false) | boolean  | toggle whether or not to close lightbox when clicking outside of image      |
+
+### Events
+
+| Event                                                                                     | Description                                                                                                                     |
+| ----------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
+| onLightboxClose(imageName: string)                                                        | Fired every time the lightbox is closed. Must implement a method to update currentImageName with the value passed by this event |
+| onLightboxChange(newImage: { name: string, alt: string, filter: string, id: string }      | Fired every time the user advances the lightbox to the next or previous image.                                                  |
 
 **Example of images array:**
 

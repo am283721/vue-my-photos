@@ -52,63 +52,6 @@ function _arrayLikeToArray(arr, len) {
 
 function _nonIterableRest() {
   throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
-}
-
-function _createForOfIteratorHelper(o, allowArrayLike) {
-  var it;
-
-  if (typeof Symbol === "undefined" || o[Symbol.iterator] == null) {
-    if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") {
-      if (it) o = it;
-      var i = 0;
-
-      var F = function () {};
-
-      return {
-        s: F,
-        n: function () {
-          if (i >= o.length) return {
-            done: true
-          };
-          return {
-            done: false,
-            value: o[i++]
-          };
-        },
-        e: function (e) {
-          throw e;
-        },
-        f: F
-      };
-    }
-
-    throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
-  }
-
-  var normalCompletion = true,
-      didErr = false,
-      err;
-  return {
-    s: function () {
-      it = o[Symbol.iterator]();
-    },
-    n: function () {
-      var step = it.next();
-      normalCompletion = step.done;
-      return step;
-    },
-    e: function (e) {
-      didErr = true;
-      err = e;
-    },
-    f: function () {
-      try {
-        if (!normalCompletion && it.return != null) it.return();
-      } finally {
-        if (didErr) throw err;
-      }
-    }
-  };
 }var script = vue.defineComponent({
   name: "Lightbox",
   components: {},
@@ -139,6 +82,11 @@ function _createForOfIteratorHelper(o, allowArrayLike) {
     closeOnBackdropClick: {
       type: Boolean,
       default: false
+    },
+    // Used to specify which image to display. When updated within the parent component, the lightbox will display the new image
+    currentImageName: {
+      type: String,
+      default: ""
     }
   },
   data: function data() {
@@ -166,6 +114,13 @@ function _createForOfIteratorHelper(o, allowArrayLike) {
     window.removeEventListener("mousemove", this.mouseEventListener); //  window.removeEventListener("touchmove", this.mouseEventListener);
 
     window.removeEventListener("mouseup", this.mouseEventListener);
+  },
+  watch: {
+    currentImageName: function currentImageName(newVal) {
+      if (newVal) {
+        this.show(newVal);
+      }
+    }
   },
   computed: {
     filteredImages: function filteredImages() {
@@ -205,58 +160,53 @@ function _createForOfIteratorHelper(o, allowArrayLike) {
       }
     },
     show: function show(imageName) {
-      this.visible = true;
-      this.controlsVisible = true;
+      // Find the index of the image passed to Lightbox
       var index = this.filteredImages.findIndex(function (img) {
         return img.name === imageName;
-      }); // Find the index of the image passed to Lightbox
+      });
 
-      var _iterator = _createForOfIteratorHelper(this.filteredImages.entries()),
-          _step;
-
-      try {
-        for (_iterator.s(); !(_step = _iterator.n()).done;) {
-          var _step$value = _slicedToArray(_step.value, 2),
-              i = _step$value[0],
-              img = _step$value[1];
-
-          if (img.name === imageName) {
-            this.index = i;
-            break;
-          }
-        }
-      } catch (err) {
-        _iterator.e(err);
-      } finally {
-        _iterator.f();
+      if (index > -1) {
+        this.visible = true;
+        this.controlsVisible = true;
+        this.index = index;
+        this.restartCaptionTimer();
+        this.preloadNextImage();
       }
-
-      this.restartCaptionTimer();
-      this.preloadNextImage();
     },
     hide: function hide() {
       this.visible = false;
       this.index = 0;
+      this.$emit("onLightboxClose", "");
       clearTimeout(this.timer);
     },
     has_next: function has_next() {
       return this.index + 1 < this.filteredImages.length;
     },
     has_prev: function has_prev() {
-      return this.index - 1 >= 0;
+      return this.index > 0;
     },
     prev: function prev() {
       if (this.has_prev()) {
         this.slideTransitionName = "lightbox-slide-prev";
         this.index -= 1;
+        this.$emit("onLightboxChange", this.getCurrentImage());
       }
     },
     next: function next() {
       if (this.has_next()) {
         this.slideTransitionName = "lightbox-slide-next";
         this.index += 1;
+        this.$emit("onLightboxChange", this.getCurrentImage());
         this.preloadNextImage();
       }
+    },
+    getCurrentImage: function getCurrentImage() {
+      return this.index >= 0 && this.index < this.filteredImages.length ? this.filteredImages[this.index] : {
+        name: "",
+        alt: "",
+        filter: "",
+        id: ""
+      };
     },
     keyEventListener: function keyEventListener(e) {
       if (this.visible) {
@@ -311,9 +261,9 @@ function _createForOfIteratorHelper(o, allowArrayLike) {
       }, this.timeoutDuration);
     }
   }
-});var _withId = /*#__PURE__*/vue.withScopeId("data-v-0805a4de");
+});var _withId = /*#__PURE__*/vue.withScopeId("data-v-21966ddd");
 
-vue.pushScopeId("data-v-0805a4de");
+vue.pushScopeId("data-v-21966ddd");
 
 var _hoisted_1 = {
   class: "lightbox-arrow-left-icon"
@@ -468,9 +418,9 @@ var render = /*#__PURE__*/_withId(function (_ctx, _cache, $props, $setup, $data,
   } else {
     style.appendChild(document.createTextNode(css));
   }
-}var css_248z = "\n.lightbox[data-v-0805a4de] {\n    position: fixed;\n    top: 0;\n    left: 0;\n    background: rgba(0, 0, 0, 0.9);\n    width: 100%;\n    height: 100%;\n    display: -webkit-box;\n    display: -ms-flexbox;\n    display: -webkit-flex;\n    display: flex;\n    justify-content: center;\n    align-items: center;\n    z-index: 200;\n    color: rgba(255, 255, 255, 0.8);\n}\n.lightbox-close[data-v-0805a4de] {\n    position: fixed;\n    z-index: 210;\n    right: 0;\n    top: 0;\n    padding: 1rem;\n    font-size: 1.7rem;\n    cursor: pointer;\n    width: 4rem;\n    height: 4rem;\n    color: white;\n}\n.lightbox-main[data-v-0805a4de] {\n    display: -webkit-box;\n    display: -ms-flexbox;\n    display: -webkit-flex;\n    display: flex;\n    width: 100%;\n    height: 100%;\n}\n.lightbox-arrow[data-v-0805a4de] {\n    padding: 0 2rem;\n    cursor: pointer;\n    display: -webkit-box;\n    display: -ms-flexbox;\n    display: -webkit-flex;\n    display: flex;\n    justify-content: center;\n    align-items: center;\n    position: absolute;\n    padding: 0 2rem;\n    height: 100%;\n    width: 2rem;\n    z-index: 100;\n}\n.lightbox-arrow-right[data-v-0805a4de] {\n    right: 0;\n}\n.lightbox-arrow-left[data-v-0805a4de] {\n    left: 0;\n}\n.lightbox-image-container[data-v-0805a4de] {\n    -webkit-box-flex: 1;\n    width: 20%;\n    -webkit-flex: 1;\n    -ms-flex: 1;\n    flex: 1;\n}\n.lightbox-image[data-v-0805a4de] {\n    width: 100%;\n    height: 100%;\n    background-size: contain;\n    background-repeat: no-repeat;\n    background-position: 50% 50%;\n}\n.lightbox-caption[data-v-0805a4de] {\n    position: absolute;\n    bottom: 15px;\n    width: 100%;\n    z-index: 100;\n    text-align: center;\n    text-shadow: 1px 1px 3px rgb(26, 26, 26);\n}\n.lightbox-caption span[data-v-0805a4de] {\n    border-radius: 12px;\n    background-color: rgba(0, 0, 0, 0.6);\n    padding: 2px 10px;\n    -webkit-user-select: none;\n    -moz-user-select: none;\n    -ms-user-select: none;\n    user-select: none;\n}\n.lightbox-slide-next-enter-active[data-v-0805a4de],\n.lightbox-slide-next-leave-active[data-v-0805a4de],\n.lightbox-slide-prev-enter-active[data-v-0805a4de],\n.lightbox-slide-prev-leave-active[data-v-0805a4de] {\n    transition: all 0.4s ease;\n}\n.lightbox-slide-next-enter[data-v-0805a4de] {\n    -webkit-transform: translateX(100px);\n    -ms-transform: translateX(100px);\n    transform: translateX(100px);\n    opacity: 0;\n}\n.lightbox-slide-next-leave-to[data-v-0805a4de] {\n    -webkit-transform: translateX(-100px);\n    -ms-transform: translateX(-100px);\n    transform: translateX(-100px);\n    opacity: 0;\n}\n.lightbox-slide-prev-enter[data-v-0805a4de] {\n    -webkit-transform: translateX(-100px);\n    -ms-transform: translateX(-100px);\n    transform: translateX(-100px);\n    opacity: 0;\n}\n.lightbox-slide-prev-leave-to[data-v-0805a4de] {\n    -webkit-transform: translateX(100px);\n    -ms-transform: translateX(100px);\n    transform: translateX(100px);\n    opacity: 0;\n}\n.lightbox-fade-enter-active[data-v-0805a4de],\n.lightbox-fade-leave-active[data-v-0805a4de] {\n    transition: all 0.4s ease;\n}\n.lightbox-fade-enter[data-v-0805a4de],\n.lightbox-fade-leave-to[data-v-0805a4de] {\n    opacity: 0;\n}\n";
+}var css_248z = "\n.lightbox[data-v-21966ddd] {\n    position: fixed;\n    top: 0;\n    left: 0;\n    background: rgba(0, 0, 0, 0.9);\n    width: 100%;\n    height: 100%;\n    display: -webkit-box;\n    display: -ms-flexbox;\n    display: -webkit-flex;\n    display: flex;\n    justify-content: center;\n    align-items: center;\n    z-index: 200;\n    color: rgba(255, 255, 255, 0.8);\n}\n.lightbox-close[data-v-21966ddd] {\n    position: fixed;\n    z-index: 210;\n    right: 0;\n    top: 0;\n    padding: 1rem;\n    font-size: 1.7rem;\n    cursor: pointer;\n    width: 4rem;\n    height: 4rem;\n    color: white;\n}\n.lightbox-main[data-v-21966ddd] {\n    display: -webkit-box;\n    display: -ms-flexbox;\n    display: -webkit-flex;\n    display: flex;\n    width: 100%;\n    height: 100%;\n}\n.lightbox-arrow[data-v-21966ddd] {\n    padding: 0 2rem;\n    cursor: pointer;\n    display: -webkit-box;\n    display: -ms-flexbox;\n    display: -webkit-flex;\n    display: flex;\n    justify-content: center;\n    align-items: center;\n    position: absolute;\n    padding: 0 2rem;\n    height: 100%;\n    width: 2rem;\n    z-index: 100;\n}\n.lightbox-arrow-right[data-v-21966ddd] {\n    right: 0;\n}\n.lightbox-arrow-left[data-v-21966ddd] {\n    left: 0;\n}\n.lightbox-image-container[data-v-21966ddd] {\n    -webkit-box-flex: 1;\n    width: 20%;\n    -webkit-flex: 1;\n    -ms-flex: 1;\n    flex: 1;\n}\n.lightbox-image[data-v-21966ddd] {\n    width: 100%;\n    height: 100%;\n    background-size: contain;\n    background-repeat: no-repeat;\n    background-position: 50% 50%;\n}\n.lightbox-caption[data-v-21966ddd] {\n    position: absolute;\n    bottom: 15px;\n    width: 100%;\n    z-index: 100;\n    text-align: center;\n    text-shadow: 1px 1px 3px rgb(26, 26, 26);\n}\n.lightbox-caption span[data-v-21966ddd] {\n    border-radius: 12px;\n    background-color: rgba(0, 0, 0, 0.6);\n    padding: 2px 10px;\n    -webkit-user-select: none;\n    -moz-user-select: none;\n    -ms-user-select: none;\n    user-select: none;\n}\n.lightbox-slide-next-enter-active[data-v-21966ddd],\n.lightbox-slide-next-leave-active[data-v-21966ddd],\n.lightbox-slide-prev-enter-active[data-v-21966ddd],\n.lightbox-slide-prev-leave-active[data-v-21966ddd] {\n    transition: all 0.4s ease;\n}\n.lightbox-slide-next-enter[data-v-21966ddd] {\n    -webkit-transform: translateX(100px);\n    -ms-transform: translateX(100px);\n    transform: translateX(100px);\n    opacity: 0;\n}\n.lightbox-slide-next-leave-to[data-v-21966ddd] {\n    -webkit-transform: translateX(-100px);\n    -ms-transform: translateX(-100px);\n    transform: translateX(-100px);\n    opacity: 0;\n}\n.lightbox-slide-prev-enter[data-v-21966ddd] {\n    -webkit-transform: translateX(-100px);\n    -ms-transform: translateX(-100px);\n    transform: translateX(-100px);\n    opacity: 0;\n}\n.lightbox-slide-prev-leave-to[data-v-21966ddd] {\n    -webkit-transform: translateX(100px);\n    -ms-transform: translateX(100px);\n    transform: translateX(100px);\n    opacity: 0;\n}\n.lightbox-fade-enter-active[data-v-21966ddd],\n.lightbox-fade-leave-active[data-v-21966ddd] {\n    transition: all 0.4s ease;\n}\n.lightbox-fade-enter[data-v-21966ddd],\n.lightbox-fade-leave-to[data-v-21966ddd] {\n    opacity: 0;\n}\n";
 styleInject(css_248z);script.render = render;
-script.__scopeId = "data-v-0805a4de";// Import vue component
+script.__scopeId = "data-v-21966ddd";// Import vue component
 
 // Default export is installable instance of component.
 // IIFE injects install function into component, allowing component

@@ -22,8 +22,8 @@
         </div>
 
         <transition-group name="thumbnailfade" tag="div">
-            <img v-for="thumb in filteredImages" :key="thumb.id"
-                @click="showLightbox(thumb.name)" :src="thumbnailDir + thumb.name" :alt="thumb.alt" :title="thumb.alt" />
+            <img v-for="thumb in filteredImages" :key="thumb.id" @click="showLightbox(thumb.name)"
+                :src="thumbnailDir + thumb.name" :alt="thumb.alt" :title="thumb.alt" />
         </transition-group>
 
         <lightbox ref="myLightbox"
@@ -31,7 +31,10 @@
             :directory="thumbnailDir"
             :filter="galleryFilter"
             :timeout-duration=5000
-            :close-on-backdrop-click="true"></lightbox>
+            :close-on-backdrop-click="true"
+            :current-image-name="currentImageName"
+            @on-lightbox-close="onLightboxClose"
+            @on-lightbox-change="onLightboxChange"></lightbox>
     </div>
 </template>
 
@@ -67,12 +70,18 @@ export default defineComponent({
             thumbnailDir: "https://unpkg.com/vue-my-photos@1.0.0/src/assets/",
             images: imageList,
             galleryFilter: "all",
+            currentImageName: "",
         };
     },
     methods: {
-        showLightbox: function (imageName: string) {
-            let lightbox = this.$refs.myLightbox as typeof Lightbox;
-            lightbox.show(imageName);
+        showLightbox(imageName: string) {
+            this.currentImageName = imageName;
+        },
+        onLightboxClose(imageName: string) {
+            this.currentImageName = imageName;
+        },
+        onLightboxChange(image: Image) {
+            console.log("On Lightbox Change", image);
         },
         updateFilter(filterName: string) {
             this.galleryFilter = filterName;
