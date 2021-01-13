@@ -5,7 +5,7 @@ Inspired by <a href="https://github.com/DCzajkowski/vue-pure-lightbox">vue-pure-
 needed a framework that allowed for a gallery of thumbnails as well as filtering functionality.
 
 ## Vue Compatibility
-Versions >= 2.0.0 are built for Vue 3.
+Versions >= 3.0.0 are built for Vue 3.
 
 If your project uses Vue 2, <a href="https://www.npmjs.com/package/vue-my-photos/v/1.1.1" target="_blank">use vue-my-photos-1.1.1</a>
 ## Demo
@@ -100,7 +100,7 @@ updateFilter(filterName) {
 }
 ```
 
-### A Note On v2 Updates
+### A Note On v3 Updates
 
 Previously, the lightbox was shown by accessing the component via the $refs object and calling the show method directly:
 
