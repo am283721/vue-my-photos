@@ -9,7 +9,7 @@ Versions >= 2.0.0 are built for Vue 3.
 
 If your project uses Vue 2, <a href="https://www.npmjs.com/package/vue-my-photos/v/1.1.1" target="_blank">use vue-my-photos-1.1.1</a>
 ## Demo
-<a href="https://codepen.io/am283721/pen/VEwNKR" target="_blank">Live demo available on Codepen</a>
+<a href="https://codepen.io/am283721/pen/GRjYPzb" target="_blank">Live demo available on Codepen</a>
 
 <a href="https://andrew-mcgrath.com/Portfolio" target="_blank">Or see it in action here</a>
 
