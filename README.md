@@ -22,10 +22,8 @@ npm i vue-my-photos --save
 
 ### Via CDN:
 ```html
-<!-- In <head> -->
-<meta rel="stylesheet" href="https://unpkg.com/vue-my-photos/dist/lightbox.css">
 <!-- In <body>, after Vue import -->
-<script src="https://unpkg.com/vue-my-photos/dist/lightbox.js"></script>
+<script src="https://unpkg.com/vue-my-photos/dist/lightbox.min.js"></script>
 ```
 
 ## Setup
