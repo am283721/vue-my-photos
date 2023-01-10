@@ -11,8 +11,6 @@ If your project uses Vue 2, <a href="https://www.npmjs.com/package/vue-my-photos
 ## Demo
 <a href="https://codepen.io/am283721/pen/GRjYPzb" target="_blank">Live demo available on Codepen</a>
 
-<a href="https://andrew-mcgrath.com/Portfolio" target="_blank">Or see it in action here</a>
-
 ## Installation
 
 ### Via NPM:
